@@ -520,22 +520,16 @@
                         gridSize,
                         gridSize
                     );
-                } else {
-                    // Draw snake segment
+                } else if (index === 0) {
+                    // Draw snake head with "S" text
                     const gradient = ctx.createLinearGradient(
                         segment.x * gridSize,
                         segment.y * gridSize,
                         (segment.x + 1) * gridSize,
                         (segment.y + 1) * gridSize
                     );
-
-                    if (index === 0) {
-                        gradient.addColorStop(0, '#4ecca3');
-                        gradient.addColorStop(1, '#2ecc71');
-                    } else {
-                        gradient.addColorStop(0, '#38ef7d');
-                        gradient.addColorStop(1, '#11998e');
-                    }
+                    gradient.addColorStop(0, '#4ecca3');
+                    gradient.addColorStop(1, '#2ecc71');
 
                     ctx.fillStyle = gradient;
                     ctx.fillRect(
@@ -545,16 +539,34 @@
                         gridSize - 2
                     );
 
-                    // Add shine effect
-                    if (index === 0) {
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-                        ctx.fillRect(
-                            segment.x * gridSize + 2,
-                            segment.y * gridSize + 2,
-                            gridSize / 2,
-                            gridSize / 2
-                        );
-                    }
+                    // Draw "S" text
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold ' + (gridSize - 4) + 'px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(
+                        'S',
+                        segment.x * gridSize + gridSize / 2,
+                        segment.y * gridSize + gridSize / 2
+                    );
+                } else {
+                    // Draw snake body segment
+                    const gradient = ctx.createLinearGradient(
+                        segment.x * gridSize,
+                        segment.y * gridSize,
+                        (segment.x + 1) * gridSize,
+                        (segment.y + 1) * gridSize
+                    );
+                    gradient.addColorStop(0, '#38ef7d');
+                    gradient.addColorStop(1, '#11998e');
+
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(
+                        segment.x * gridSize + 1,
+                        segment.y * gridSize + 1,
+                        gridSize - 2,
+                        gridSize - 2
+                    );
                 }
             });
         }
@@ -571,29 +583,26 @@
                     gridSize
                 );
             } else {
-                // Draw default apple
-                ctx.fillStyle = currentAppleType === 0 ? '#e74c3c' : '#c0392b';
-                ctx.beginPath();
-                ctx.arc(
-                    appleX * gridSize + gridSize / 2,
-                    appleY * gridSize + gridSize / 2,
-                    gridSize / 2 - 2,
-                    0,
-                    2 * Math.PI
+                // Draw default apple with text
+                const isApple1 = currentAppleType === 0;
+                ctx.fillStyle = isApple1 ? '#e74c3c' : '#27ae60';
+                ctx.fillRect(
+                    appleX * gridSize + 1,
+                    appleY * gridSize + 1,
+                    gridSize - 2,
+                    gridSize - 2
                 );
-                ctx.fill();
 
-                // Apple highlight
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-                ctx.beginPath();
-                ctx.arc(
-                    appleX * gridSize + gridSize / 3,
-                    appleY * gridSize + gridSize / 3,
-                    gridSize / 6,
-                    0,
-                    2 * Math.PI
+                // Draw "A1" or "A2" text
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold ' + (gridSize - 8) + 'px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(
+                    isApple1 ? 'A1' : 'A2',
+                    appleX * gridSize + gridSize / 2,
+                    appleY * gridSize + gridSize / 2
                 );
-                ctx.fill();
             }
         }
 
@@ -601,10 +610,8 @@
             appleX = Math.floor(Math.random() * tileCount);
             appleY = Math.floor(Math.random() * tileCount);
 
-            // Alternate between apple images
-            if (apple1Img && apple2Img) {
-                currentAppleType = currentAppleType === 0 ? 1 : 0;
-            }
+            // Randomly select apple type (0 or 1)
+            currentAppleType = Math.floor(Math.random() * 2);
 
             // Make sure apple doesn't spawn on snake
             snake.forEach(segment => {
